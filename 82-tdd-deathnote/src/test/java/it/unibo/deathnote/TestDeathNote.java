@@ -21,8 +21,9 @@ class TestDeathNote {
     static private String DEATH_DETAIL1 = "ran for too long";
     static private String DEATH_DETAIL2 = "no one is around";
     //waiting times are expressed im milliseconds
-    static private long MILLIS_TO_WAIT_FOR_DEATH_CAUSE = 100;
-    static private long MILLIS_TO_WAIT_FOR_DEATH_DETAILS = 6100;
+    static private long DELAY = 60;
+    static private long MILLIS_TO_WAIT_FOR_DEATH_CAUSE = DeathNoteImpl.MILLIS_TO_WAIT_FOR_DEATH + DELAY;
+    static private long MILLIS_TO_WAIT_FOR_DEATH_DETAILS = DeathNoteImpl.MILLIS_TO_WAIT_FOR_CHANGE_DEATH_DETAILS + DELAY;
     //before each test the death note must be empty
     @BeforeEach
     void prepareNoteForTest() {
@@ -64,9 +65,10 @@ class TestDeathNote {
         note.writeName(NAME1);
         assertTrue(note.getDeathCause(NAME1).equals(DEATH_CAUSE1));
         note.writeName(NAME2);
-        note.writeDeathCause(DEATH_CAUSE2);
+        assertTrue(note.writeDeathCause(DEATH_CAUSE2));
+        assertTrue(note.getDeathCause(NAME2).equals(DEATH_CAUSE2));
         long initialTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - initialTime < MILLIS_TO_WAIT_FOR_DEATH_CAUSE);
+        while (wait(initialTime, MILLIS_TO_WAIT_FOR_DEATH_CAUSE));
         note.writeDeathCause(DEATH_CAUSE1);
         assertTrue(note.getDeathCause(NAME2).equals(DEATH_CAUSE2));
     }
@@ -80,11 +82,15 @@ class TestDeathNote {
         assertThrows(IllegalStateException.class,() -> note.writeDetails(DEATH_CAUSE1));
         note.writeName(NAME1);
         assertTrue(note.getDeathDetails(NAME1).isEmpty());
-        note.writeDeathCause(DEATH_DETAIL1);
+        assertTrue(note.writeDetails(DEATH_DETAIL1));
         assertTrue(note.getDeathDetails(NAME1).equals(DEATH_DETAIL1));
+        note.writeName(NAME2);
         long initialTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - initialTime < MILLIS_TO_WAIT_FOR_DEATH_DETAILS);
+        while (wait(initialTime, MILLIS_TO_WAIT_FOR_DEATH_DETAILS));
         note.writeDetails(DEATH_DETAIL2);
-        assertTrue(note.getDeathDetails(NAME1).equals(DEATH_CAUSE1));
+        assertTrue(!note.getDeathDetails(NAME2).equals(DEATH_DETAIL1));
+    }
+    private boolean wait(final long startingTime, final long waitingTime) {
+        return System.currentTimeMillis() - startingTime < waitingTime;
     }
 }
