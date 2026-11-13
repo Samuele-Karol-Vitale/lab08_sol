@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.netbeans.external:org-apache-commons-lang3:RELEASE310")
     // The BOM (Bill of Materials) synchronizes all the versions of Junit coherently.
     testImplementation(platform("org.junit:junit-bom:6.1.3"))
     // The annotations, assertions and other elements we want to have access to when compiling our tests.

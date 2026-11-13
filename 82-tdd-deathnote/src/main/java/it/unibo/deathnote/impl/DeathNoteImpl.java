@@ -1,49 +1,110 @@
 package it.unibo.deathnote.impl;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.tuple.Pair;
 
 import it.unibo.deathnote.api.DeathNote;
-
 public class DeathNoteImpl implements DeathNote{
-
-    @Override
+    static public long MILLIS_TO_WAIT_FOR_DEATH = 40;
+    static public  long MILLIS_TO_WAIT_FOR_CHANGE_DEATH_DETAILS = 6040;
+    static public String DEFAULT_DEATH_CAUSE = "heart attack";
+    static public String DEFAULT_DEATH_DETAILS = "";
+    private Map<String, Pair<String, String>> noteBookContent;
+    private String selectedPersonToKill;
+    private long initialDeathSentenceTime;
+    public DeathNoteImpl() {
+        
+        noteBookContent = new HashMap<>();
+        selectedPersonToKill = null;
+        initialDeathSentenceTime = 0;
+    }
+    /**    
+     * @{inheritedoc}
+     */
     public String getRule(int ruleNumber) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRule'");
+        if(ruleNumber <= 0 || ruleNumber > DeathNote.RULES.size()) {
+            throw new IllegalArgumentException();
+        }
+        int ruleIndex = ruleNumber - 1;
+        return new String(DeathNote.RULES.get(ruleIndex));
     }
 
-    @Override
+    /**    
+     * @{inheritedoc}
+     */
     public void writeName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeName'");
+        if(name == null) {
+            throw new NullPointerException();
+        }
+        noteBookContent.put(
+            name,
+            new DeathCauseDetails(DEFAULT_DEATH_CAUSE, DEFAULT_DEATH_DETAILS)
+        );
+        selectedPersonToKill = name;
+        initialDeathSentenceTime = System.currentTimeMillis();
     }
 
-    @Override
+    /**    
+     * @{inheritedoc}
+     */
     public boolean writeDeathCause(String cause) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDeathCause'");
+        if(cause == null || selectedPersonToKill == null) {
+            throw new IllegalStateException();
+        }
+        if(isInTime(initialDeathSentenceTime, MILLIS_TO_WAIT_FOR_DEATH)) {
+            noteBookContent.put(
+                selectedPersonToKill, 
+                new DeathCauseDetails(
+                    cause, 
+                    noteBookContent.get(selectedPersonToKill).getRight()
+                )
+            );
+            return true;
+        }
+        return false;
+        
     }
 
-    @Override
+    /**    
+     * @{inheritedoc}
+     */
     public boolean writeDetails(String details) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDetails'");
+        if(details == null || selectedPersonToKill == null) {
+            throw new IllegalStateException();
+        }
+        if(isInTime(initialDeathSentenceTime, MILLIS_TO_WAIT_FOR_CHANGE_DEATH_DETAILS)) {
+            noteBookContent.get(selectedPersonToKill).setValue(details);
+            return true;
+        }
+        return false;
     }
 
-    @Override
+    /**    
+     * @{inheritedoc}
+     */
     public String getDeathCause(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathCause'");
+       if(!isNameWritten(name)) {
+            throw new IllegalArgumentException();
+        }
+        return noteBookContent.get(name).getLeft();
     }
 
-    @Override
+    /**    
+     * @{inheritedoc}
+     */
     public String getDeathDetails(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathDetails'");
+       if(!isNameWritten(name)) {
+            throw new IllegalArgumentException();
+        }
+        return noteBookContent.get(name).getRight();
     }
-
-    @Override
+    /**    
+     * @{inheritedoc}
+     */
     public boolean isNameWritten(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isNameWritten'");
+        return noteBookContent.get(name) != null;
     }
-    
+    private boolean isInTime(long initialTime,long waitingTime) {
+        return System.currentTimeMillis() - initialTime < waitingTime;
+    }
 }
