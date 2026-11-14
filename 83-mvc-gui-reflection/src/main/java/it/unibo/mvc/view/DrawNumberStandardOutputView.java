@@ -3,7 +3,6 @@ package it.unibo.mvc.view;
 import it.unibo.mvc.api.DrawNumberController;
 import it.unibo.mvc.api.DrawNumberView;
 import it.unibo.mvc.api.DrawResult;
-
 public class DrawNumberStandardOutputView implements DrawNumberView{
     private static final String STARTING_MESSAGE = "Draw Number App Started";
     private static final String NEW_GAME = ": a new game starts!";

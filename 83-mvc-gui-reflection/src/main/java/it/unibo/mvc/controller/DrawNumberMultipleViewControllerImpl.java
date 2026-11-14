@@ -8,10 +8,10 @@ import it.unibo.mvc.api.DrawNumber;
 import it.unibo.mvc.api.DrawNumberController;
 import it.unibo.mvc.api.DrawNumberView;
 
-public class DrawNumberMultipleViewController implements DrawNumberController{
+public class DrawNumberMultipleViewControllerImpl implements DrawNumberController{
     private final DrawNumber model;
     private Collection<DrawNumberView> viewColletion;
-    public DrawNumberMultipleViewController(final DrawNumber model) {
+    public DrawNumberMultipleViewControllerImpl(final DrawNumber model) {
         this.model = model;
         viewColletion = new HashSet<>();
     }
