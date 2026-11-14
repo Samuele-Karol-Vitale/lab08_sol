@@ -12,7 +12,6 @@ public class DrawNumberStandardOutputView implements DrawNumberView{
 
     @Override
     public void start() {
-        showMessage(STARTING_MESSAGE);
     }
 
     @Override
