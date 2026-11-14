@@ -22,8 +22,7 @@ public class DrawNumberStandardOutputView implements DrawNumberView{
                 showMessage(res.getDescription());
                 return;
             }
-            case YOU_WON -> showMessage(res.getDescription() + NEW_GAME);
-            case YOU_LOST -> showMessage("LOST:" + res.getDescription() + NEW_GAME );
+            case YOU_WON, YOU_LOST -> showMessage(res.getDescription() + NEW_GAME);
         }
     }
     private void showMessage(String msg) {
